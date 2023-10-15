@@ -1,11 +1,11 @@
 package br.com.gilvaneamaro.todolist.task;
 
+import br.com.gilvaneamaro.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -44,8 +44,10 @@ public class TaskController {
     @PutMapping("/{id}")
     public TaskModel update( @RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
         var idUser = request.getAttribute("IdUser");
-        taskModel.setIdUser((UUID) idUser);
-        taskModel.setId(id);
-        return this.repository.save(taskModel);
+        var task = this.repository.findById(id).orElse(null);
+
+        Utils.copyNonNullProperties(taskModel, task);
+
+        return this.repository.save(task);
     }
 }
