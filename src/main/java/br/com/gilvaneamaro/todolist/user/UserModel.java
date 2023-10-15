@@ -16,7 +16,7 @@ public class UserModel {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    private UUID uuid;
+    private UUID id;
 
     private String name;
 
