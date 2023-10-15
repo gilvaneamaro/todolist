@@ -42,12 +42,24 @@ public class TaskController {
 
     }
     @PutMapping("/{id}")
-    public TaskModel update( @RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
-        var idUser = request.getAttribute("IdUser");
+    public ResponseEntity update( @RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
+
         var task = this.repository.findById(id).orElse(null);
 
-        Utils.copyNonNullProperties(taskModel, task);
 
-        return this.repository.save(task);
+
+        var idUser = request.getAttribute("idUser");
+
+        if(task == null){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tarz'efa não encontrada");
+        }
+        else if(!task.getIdUser().equals(idUser)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário sem permissão para alterar essa task");
+        }
+
+        Utils.copyNonNullProperties(taskModel, task);
+        var taskUpdated = this.repository.save(task);
+        return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
+
     }
 }
