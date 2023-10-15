@@ -45,9 +45,6 @@ public class TaskController {
     public ResponseEntity update( @RequestBody TaskModel taskModel, HttpServletRequest request, @PathVariable UUID id){
 
         var task = this.repository.findById(id).orElse(null);
-
-
-
         var idUser = request.getAttribute("idUser");
 
         if(task == null){
